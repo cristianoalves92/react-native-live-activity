@@ -6,7 +6,9 @@ const LINKING_ERROR =
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo managed workflow\n';
 
-const LiveActivity = NativeModules.LiveActivity  ? NativeModules.LiveActivity  : new Proxy(
+const LiveActivity = NativeModules.LiveActivity
+  ? NativeModules.LiveActivity
+  : new Proxy(
       {},
       {
         get() {
@@ -15,6 +17,32 @@ const LiveActivity = NativeModules.LiveActivity  ? NativeModules.LiveActivity  :
       }
     );
 
-export function multiply(a: number, b: number): Promise<number> {
-  return LiveActivity.multiply(a, b);
+export function startActivity(
+  status: string,
+  driverName: string,
+  expectingDeliveryTime: string
+) {
+  return LiveActivity.startActivity(status, driverName, expectingDeliveryTime);
+}
+
+export function listAllActivities() {
+  return LiveActivity.listAllActivities();
+}
+
+export function endActivity(id: string) {
+  return LiveActivity.endActivity(id);
+}
+
+export function updateActivity(
+  id: string,
+  status: string,
+  driverName: string,
+  expectingDeliveryTime: string
+) {
+  return LiveActivity.updateActivity(
+    id,
+    status,
+    driverName,
+    expectingDeliveryTime
+  );
 }
