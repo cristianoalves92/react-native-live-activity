@@ -4,7 +4,6 @@ import {
   StyleSheet,
   View,
   Text,
-  TextInput,
   SafeAreaView,
   Button,
   FlatList,
@@ -15,6 +14,8 @@ import {
   endActivity,
   updateActivity,
 } from 'react-native-live-activity';
+import ActivitiesList from './ActivitiesList';
+import Row from './Row';
 
 export default function App() {
   const [status, setStatus] = React.useState<string>('Packing');
@@ -31,7 +32,6 @@ export default function App() {
     }
   }, [activity]);
 
-  console.log(activities);
   React.useEffect(() => {
     listAllActivities().then(setActivities);
   }, [setActivities]);
@@ -47,10 +47,10 @@ export default function App() {
   }, [status, driver, deliverTime, activity]);
 
   const onPressEndActivity = React.useCallback(
-    (id) => {
+    (item) => {
       return () => {
-        endActivity(id);
-        setActivities(activities.filter((value) => value.id !== id));
+        endActivity(item.id);
+        setActivities(activities.filter((value) => value.id !== item.id));
       };
     },
     [activities]
@@ -65,39 +65,16 @@ export default function App() {
     [activities]
   );
 
-  const renderItem = React.useCallback(
-    (item) => {
-      return (
-        <View style={styles.cell}>
-          <Text>{item.item.id}</Text>
-          <Button title="End" onPress={onPressEndActivity(item.item.id)} />
-          <Button title="Edit" onPress={onPressEditActivity(item.item)} />
-        </View>
-      );
-    },
-    [activities]
-  );
-
   return (
     <SafeAreaView>
       <View style={styles.container}>
-        <Text>Status</Text>
-        <TextInput
-          value={status}
-          onChangeText={setStatus}
-          style={styles.textInput}
-        />
-        <Text>Driver</Text>
-        <TextInput
-          value={driver}
-          onChangeText={setDriver}
-          style={styles.textInput}
-        />
-        <Text>Delivery Time</Text>
-        <TextInput
-          value={deliverTime}
+        <Text style={styles.title}>Live Activities React Native</Text>
+        <Row onChangeText={setStatus} label="Status" value={status} />
+        <Row onChangeText={setDriver} label="Driver" value={driver} />
+        <Row
           onChangeText={setDeliveryTime}
-          style={styles.textInput}
+          label="Delivery Time"
+          value={deliverTime}
         />
       </View>
       <Button
@@ -105,15 +82,19 @@ export default function App() {
         onPress={!!activity ? onPressEdit : onPressCreate}
       />
 
-      <Text>List of activities</Text>
-      <FlatList data={activities} renderItem={renderItem} />
+      <ActivitiesList
+        activities={activities}
+        onPressEditActivity={onPressEditActivity}
+        onPressEndActivity={onPressEndActivity}
+      />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  title: { fontSize: 32, fontWeight: 'bold', paddingBottom: 16 },
   container: {
-    width: '100%',
+    padding: 16,
   },
   cell: { flexDirection: 'row', padding: 8, borderBottomWidth: 1 },
   textInput: { borderWidth: 1, padding: 8 },

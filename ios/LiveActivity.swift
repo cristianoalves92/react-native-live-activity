@@ -1,14 +1,5 @@
-import ActivityKit
 import Foundation
-
-struct MyActivityAttributes: ActivityAttributes {
-    
-    public struct ContentState: Codable, Hashable {
-        var status: String
-        var driverName: String
-        var expectedDeliveryTime: String
-    }
-}
+import ActivityKit
 
 @objc(LiveActivity)
 class LiveActivity: NSObject {
@@ -17,22 +8,20 @@ class LiveActivity: NSObject {
     func startActivity(status: String, driverName: String, expectingDeliveryTime: String, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         if #available(iOS 16.1, *) {
             var activity: Activity<MyActivityAttributes>?
-            var activityExpanded = true
-
-           let initialContentState = MyActivityAttributes
-               .ContentState(status: status, driverName: driverName, expectedDeliveryTime: expectingDeliveryTime)
+            let initialContentState = MyActivityAttributes
+                .ContentState(status: status, driverName: driverName, expectedDeliveryTime: expectingDeliveryTime)
+            let activityAttributes = MyActivityAttributes()
             
-           let activityAttributes = MyActivityAttributes()
-
             do {
-               activity = try Activity
-                   .request(attributes: activityAttributes, contentState: initialContentState)
+                activity = try Activity
+                    .request(attributes: activityAttributes, contentState: initialContentState)
                 
                 resolve("Requested Live Activity \(String(describing: activity?.id)).")
-                activityExpanded.toggle()
-           } catch (let error) {
-               resolve("Error requesting Live Activity \(error.localizedDescription).")
-           }
+            } catch (let error) {
+                reject("Error requesting Live Activity \(error.localizedDescription).", "", error)
+            }
+        } else {
+            reject("Not available", "", NSError())
         }
     }
     
@@ -42,6 +31,8 @@ class LiveActivity: NSObject {
             var activities = Activity<MyActivityAttributes>.activities
             activities.sort { $0.id > $1.id }
             resolve(activities.map{["id": $0.id, "status": $0.contentState.status, "driverName": $0.contentState.driverName, "expectingDeliveryTime": $0.contentState.expectedDeliveryTime ]})
+        } else {
+            reject("Not available", "", NSError())
         }
     }
     
@@ -49,9 +40,10 @@ class LiveActivity: NSObject {
     func endActivity(id: String, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         if #available(iOS 16.1, *) {
             Task {
-                var activities = Activity<MyActivityAttributes>.activities
-                await activities.filter {$0.id == id}.first?.end(dismissalPolicy: .immediate)
+                await Activity<MyActivityAttributes>.activities.filter {$0.id == id}.first?.end(dismissalPolicy: .immediate)
             }
+        } else {
+            reject("Not available","", NSError())
         }
     }
     
@@ -61,13 +53,12 @@ class LiveActivity: NSObject {
             Task {
                 let updatedStatus = MyActivityAttributes
                     .ContentState(status: status, driverName: driverName, expectedDeliveryTime: expectingDeliveryTime)
-                var activities = Activity<MyActivityAttributes>.activities
-                var activity = activities.filter {$0.id == id}.first
+                let activities = Activity<MyActivityAttributes>.activities
+                let activity = activities.filter {$0.id == id}.first
                 await activity?.update(using: updatedStatus)
-                
-               
-
             }
+        } else {
+            reject("Not available", "", NSError())
         }
     }
 }
