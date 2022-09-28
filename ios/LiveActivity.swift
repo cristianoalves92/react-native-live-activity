@@ -30,7 +30,8 @@ class LiveActivity: NSObject {
         if #available(iOS 16.1, *) {
             var activities = Activity<MyActivityAttributes>.activities
             activities.sort { $0.id > $1.id }
-            resolve(activities.map{["id": $0.id, "status": $0.contentState.status, "driverName": $0.contentState.driverName, "expectingDeliveryTime": $0.contentState.expectedDeliveryTime ]})
+            
+            return resolve(activities.map{["id": $0.id, "status": $0.contentState.status, "driverName": $0.contentState.driverName, "expectingDeliveryTime": $0.contentState.expectedDeliveryTime ]})
         } else {
             reject("Not available", "", NSError())
         }

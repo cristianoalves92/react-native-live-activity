@@ -1,13 +1,6 @@
 import * as React from 'react';
 
-import {
-  StyleSheet,
-  View,
-  Text,
-  SafeAreaView,
-  Button,
-  FlatList,
-} from 'react-native';
+import { StyleSheet, View, Text, SafeAreaView, Button } from 'react-native';
 import {
   startActivity,
   listAllActivities,
