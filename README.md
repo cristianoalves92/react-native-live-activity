@@ -46,7 +46,10 @@ $ open ./example/ios/LiveActivityExample.xcworkspace
 
 After that build the xCode project.
 
-<!-- Add video -->
+
+
+https://user-images.githubusercontent.com/3778297/192741742-9d3a9bc5-e26a-4197-b152-5f60796736eb.mp4
+
 
 ## License
 
