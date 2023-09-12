@@ -4,12 +4,12 @@ import ActivityKit
 @objc(LiveActivity)
 class LiveActivity: NSObject {
 
-    @objc(startActivity:withDriverName:withExpectingDeliveryTime:withResolver:withRejecter:)
-    func startActivity(status: String, driverName: String, expectingDeliveryTime: String, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
+    @objc(startActivity:withResolver:withRejecter:)
+    func startActivity(data: String, resolve:RCTPromiseResolveBlock, reject:RCTPromiseRejectBlock) -> Void {
         if #available(iOS 16.1, *) {
             var activity: Activity<MyActivityAttributes>?
             let initialContentState = MyActivityAttributes
-                .ContentState(status: status, driverName: driverName, expectedDeliveryTime: expectingDeliveryTime)
+                .ContentState(data: data)
             let activityAttributes = MyActivityAttributes()
             
             do {
@@ -31,7 +31,7 @@ class LiveActivity: NSObject {
             var activities = Activity<MyActivityAttributes>.activities
             activities.sort { $0.id > $1.id }
             
-            return resolve(activities.map{["id": $0.id, "status": $0.contentState.status, "driverName": $0.contentState.driverName, "expectingDeliveryTime": $0.contentState.expectedDeliveryTime ]})
+            return resolve(activities.map{["id": $0.id, "data": $0.contentState.data ]})
         } else {
             reject("Not available", "", NSError())
         }
@@ -48,12 +48,12 @@ class LiveActivity: NSObject {
         }
     }
     
-    @objc(updateActivity:withStatus:withDriverName:withExpectingDeliveryTime:withResolver:withRejecter:)
-    func updateActivity(id: String, status: String, driverName: String, expectingDeliveryTime: String, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
+    @objc(updateActivity:withData:withResolver:withRejecter:)
+    func updateActivity(id: String, data: String, resolve:RCTPromiseResolveBlock,reject:RCTPromiseRejectBlock) -> Void {
         if #available(iOS 16.1, *) {
             Task {
                 let updatedStatus = MyActivityAttributes
-                    .ContentState(status: status, driverName: driverName, expectedDeliveryTime: expectingDeliveryTime)
+                    .ContentState(data: data)
                 let activities = Activity<MyActivityAttributes>.activities
                 let activity = activities.filter {$0.id == id}.first
                 await activity?.update(using: updatedStatus)

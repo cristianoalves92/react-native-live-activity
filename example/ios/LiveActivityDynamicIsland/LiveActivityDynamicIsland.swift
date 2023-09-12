@@ -10,41 +10,56 @@ import SwiftUI
 import ActivityKit
 
 struct MyActivityAttributes: ActivityAttributes {
-  
   public struct ContentState: Codable, Hashable {
-    var status: String
-    var driverName: String
-    var expectedDeliveryTime: String
+    var data: String
   }
 }
 
+struct Information: Codable {
+  let status: String
+  let driverName: String
+  let expectedDeliveryTime: String
+}
+
+func toJson(dataString: String) -> Information {
+  let decoder = JSONDecoder()
+  let stateData = Data(dataString.utf8);
+  let data = try? decoder.decode(Information.self, from: stateData)
+  if (data == nil) {
+    NSLog("Error: %@ %@", "Data is null");
+    return Information(status: "No status", driverName: "No Driver Name", expectedDeliveryTime: "00:00")
+  }
+  return data ?? Information(status: "No status", driverName: "No Driver Name", expectedDeliveryTime: "00:00");
+}
 
 @main
 @available(iOS 16.1, *)
 struct LiveActivityDynamicIsland: Widget {
   var body: some WidgetConfiguration {
     ActivityConfiguration(for: MyActivityAttributes.self) { context in
-      HStack {
+      let data = toJson(dataString: context.state.data)
+      return HStack {
         Image(systemName: "bicycle")
           .foregroundColor(.blue)
           .padding(8)
         VStack(alignment: .leading) {
-          Text(context.state.status)
+          Text(data.status)
             .font(.body)
-          Text(context.state.driverName)
+          Text(data.driverName)
         }
         Spacer()
         VStack(alignment: .trailing) {
           Text("Deliver at")
             .font(.body)
-          Text(context.state.expectedDeliveryTime)
+          Text(data.expectedDeliveryTime)
             .font(.footnote)
         }
         .padding(8)
       }
       .padding(8)
     } dynamicIsland: { context in
-      DynamicIsland {
+      let data = toJson(dataString: context.state.data)
+      return DynamicIsland {
         DynamicIslandExpandedRegion(.leading) {
           Image(systemName: "bicycle")
             .foregroundColor(.blue)
@@ -54,24 +69,24 @@ struct LiveActivityDynamicIsland: Widget {
           VStack(alignment: .leading) {
             Text("Deliver at")
               .font(.body)
-            Text(context.state.expectedDeliveryTime)
+            Text(data.expectedDeliveryTime)
               .font(.footnote)
           }
         }
         DynamicIslandExpandedRegion(.center) {
-          Text(context.state.status)
+          Text(data.status)
             .font(.body)
         }
         DynamicIslandExpandedRegion(.bottom) {
-          Text(context.state.driverName)
+          Text(data.driverName)
         }
       } compactLeading: {
         Image(systemName: "bicycle")
           .foregroundColor(.blue)
       } compactTrailing: {
-        Text(context.state.expectedDeliveryTime)
+        Text(data.expectedDeliveryTime)
       } minimal: {
-        Text(context.state.expectedDeliveryTime)
+        Text(data.expectedDeliveryTime)
       }
       .keylineTint(.yellow)
     }

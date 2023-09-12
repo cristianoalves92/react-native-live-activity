@@ -10,10 +10,17 @@ import {
 import ActivitiesList from './ActivitiesList';
 import Row from './Row';
 
+interface StartLiveActivityParams {
+  status: string;
+  driverName: string;
+  expectedDeliveryTime: string;
+}
+
 export default function App() {
   const [status, setStatus] = React.useState<string>('Packing');
-  const [driver, setDriver] = React.useState<string>('John');
-  const [deliverTime, setDeliveryTime] = React.useState<string>('3pm');
+  const [driverName, setDriver] = React.useState<string>('John');
+  const [expectedDeliveryTime, setExpectedDeliveryTime] =
+    React.useState<string>('3pm');
   const [activities, setActivities] = React.useState<any[]>([]);
   const [activity, setActivity] = React.useState<any>();
 
@@ -21,23 +28,30 @@ export default function App() {
     if (activity) {
       setDriver(activity.driverName);
       setStatus(activity.status);
-      setDeliveryTime(activity.expectingDeliveryTime);
+      setExpectedDeliveryTime(activity.expectingDeliveryTime);
     }
   }, [activity]);
 
   React.useEffect(() => {
     listAllActivities().then(setActivities);
   }, [setActivities]);
+
   const onPressCreate = React.useCallback(() => {
-    startActivity(status, driver, deliverTime).then(() =>
-      listAllActivities().then(setActivities)
-    );
-  }, [status, driver, deliverTime]);
+    startActivity<StartLiveActivityParams>({
+      status,
+      driverName,
+      expectedDeliveryTime,
+    }).then(() => listAllActivities().then(setActivities));
+  }, [status, driverName, expectedDeliveryTime]);
 
   const onPressEdit = React.useCallback(() => {
-    updateActivity(activity.id, status, driver, deliverTime);
+    updateActivity<StartLiveActivityParams>(activity.id, {
+      status,
+      driverName,
+      expectedDeliveryTime,
+    });
     setActivity(undefined);
-  }, [status, driver, deliverTime, activity]);
+  }, [status, driverName, expectedDeliveryTime, activity]);
 
   const onPressEndActivity = React.useCallback(
     (item) => {
@@ -63,11 +77,11 @@ export default function App() {
       <View style={styles.container}>
         <Text style={styles.title}>Live Activities React Native</Text>
         <Row onChangeText={setStatus} label="Status" value={status} />
-        <Row onChangeText={setDriver} label="Driver" value={driver} />
+        <Row onChangeText={setDriver} label="Driver" value={driverName} />
         <Row
-          onChangeText={setDeliveryTime}
-          label="Delivery Time"
-          value={deliverTime}
+          onChangeText={setExpectedDeliveryTime}
+          label="Expected Delivery Time"
+          value={expectedDeliveryTime}
         />
       </View>
       <Button

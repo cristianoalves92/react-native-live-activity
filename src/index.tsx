@@ -17,12 +17,9 @@ const LiveActivity = NativeModules.LiveActivity
       }
     );
 
-export function startActivity(
-  status: string,
-  driverName: string,
-  expectingDeliveryTime: string
-) {
-  return LiveActivity.startActivity(status, driverName, expectingDeliveryTime);
+export function startActivity<T extends Record<string, any>>(data: T) {
+  const dataString = JSON.stringify(data);
+  return LiveActivity.startActivity(dataString);
 }
 
 export function listAllActivities() {
@@ -33,16 +30,10 @@ export function endActivity(id: string) {
   return LiveActivity.endActivity(id);
 }
 
-export function updateActivity(
+export function updateActivity<T extends Record<string, any>>(
   id: string,
-  status: string,
-  driverName: string,
-  expectingDeliveryTime: string
+  data: T
 ) {
-  return LiveActivity.updateActivity(
-    id,
-    status,
-    driverName,
-    expectingDeliveryTime
-  );
+  const dataString = JSON.stringify(data);
+  return LiveActivity.updateActivity(id, dataString);
 }
