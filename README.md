@@ -10,6 +10,10 @@ npm install react-native-live-activity
 
 ```
 
+## Build your Swift module
+
+Take inspiration from the [example](./example/ios/LiveActivityDynamicIsland/LiveActivityDynamicIsland.swift) to build your own Swift module.
+
 ## Usage
 
 ```js
@@ -20,9 +24,23 @@ endActivity,
 updateActivity,
 } from 'react-native-live-activity';
 
+// Please be careful to use the same interface as the one you defined in your Swift module.
+interface LiveActivityParams {
+  status: string;
+  driverName: string;
+  expectedDeliveryTime: string;
+}
 
-await startActivity("Packing", "Jhon", "12 PM")
-await updateActivity(activity.id, "Driving", "Jhon", "12 PM");
+await startActivity({
+  status: "Packing",
+  driveName: "John",
+  expectedDeliveryTime: "12 PM"
+})
+await updateActivity(activity.id, {
+  status: "Driving",
+  driveName: "John",
+  expectedDeliveryTime: "12 PM"
+});
 await endActivity(activity.id);
 
 const [activities, setActivities] = React.useState<any[]>([]);

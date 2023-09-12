@@ -21,6 +21,7 @@ struct Information: Codable {
   let expectedDeliveryTime: String
 }
 
+// Data are sent as a string, so we need to convert it to a struct
 func toJson(dataString: String) -> Information {
   let decoder = JSONDecoder()
   let stateData = Data(dataString.utf8);
