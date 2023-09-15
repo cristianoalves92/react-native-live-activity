@@ -17,20 +17,38 @@ const LiveActivity = NativeModules.LiveActivity
       }
     );
 
-export function startActivity<T extends Record<string, any>>(data: T) {
+export async function startActivity<T extends Record<string, any>>(
+  data: T
+): Promise<string> {
   const dataString = JSON.stringify(data);
   return LiveActivity.startActivity(dataString);
 }
 
-export function listAllActivities() {
-  return LiveActivity.listAllActivities();
+export async function listAllActivities<
+  T extends Record<string, any>
+>(): Promise<{
+  id: string;
+  data: T;
+}> {
+  return LiveActivity.listAllActivities()
+    .then((activities: { id: string; data: string }[]) => {
+      return activities?.map((activity) => {
+        return {
+          id: activity.id,
+          data: JSON.parse(activity.data) as T,
+        };
+      });
+    })
+    .catch((err: Error) => {
+      console.error(err);
+    });
 }
 
 export function endActivity(id: string) {
   return LiveActivity.endActivity(id);
 }
 
-export function updateActivity<T extends Record<string, any>>(
+export async function updateActivity<T extends Record<string, any>>(
   id: string,
   data: T
 ) {
