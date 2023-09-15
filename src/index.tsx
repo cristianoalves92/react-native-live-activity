@@ -26,10 +26,12 @@ export async function startActivity<T extends Record<string, any>>(
 
 export async function listAllActivities<
   T extends Record<string, any>
->(): Promise<{
-  id: string;
-  data: T;
-}> {
+>(): Promise<
+  {
+    id: string;
+    data: T;
+  }[]
+> {
   return LiveActivity.listAllActivities()
     .then((activities: { id: string; data: string }[]) => {
       return activities?.map((activity) => {

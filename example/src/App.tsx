@@ -21,19 +21,27 @@ export default function App() {
   const [driverName, setDriver] = React.useState<string>('John');
   const [expectedDeliveryTime, setExpectedDeliveryTime] =
     React.useState<string>('3pm');
-  const [activities, setActivities] = React.useState<any[]>([]);
-  const [activity, setActivity] = React.useState<any>();
+  const [activities, setActivities] = React.useState<
+    {
+      id: string;
+      data: StartLiveActivityParams;
+    }[]
+  >([]);
+  const [activity, setActivity] = React.useState<{
+    id: string;
+    data: StartLiveActivityParams;
+  }>();
 
   React.useEffect(() => {
     if (activity) {
-      setDriver(activity.driverName);
-      setStatus(activity.status);
-      setExpectedDeliveryTime(activity.expectingDeliveryTime);
+      setDriver(activity?.data?.driverName);
+      setStatus(activity?.data?.status);
+      setExpectedDeliveryTime(activity?.data?.expectedDeliveryTime);
     }
   }, [activity]);
 
   React.useEffect(() => {
-    listAllActivities().then(setActivities);
+    listAllActivities<StartLiveActivityParams>().then(setActivities);
   }, [setActivities]);
 
   const onPressCreate = React.useCallback(() => {
@@ -41,10 +49,15 @@ export default function App() {
       status,
       driverName,
       expectedDeliveryTime,
-    }).then(() => listAllActivities().then(setActivities));
+    }).then(() =>
+      listAllActivities<StartLiveActivityParams>().then(setActivities)
+    );
   }, [status, driverName, expectedDeliveryTime]);
 
   const onPressEdit = React.useCallback(() => {
+    if (!activity?.id) {
+      return;
+    }
     updateActivity<StartLiveActivityParams>(activity.id, {
       status,
       driverName,
