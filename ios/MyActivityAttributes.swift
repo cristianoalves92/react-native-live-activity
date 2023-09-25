@@ -11,8 +11,6 @@ import ActivityKit
 struct MyActivityAttributes: ActivityAttributes {
     
     public struct ContentState: Codable, Hashable {
-        var status: String
-        var driverName: String
-        var expectedDeliveryTime: String
+        var data: String
     }
 }
