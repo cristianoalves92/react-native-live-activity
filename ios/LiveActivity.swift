@@ -22,8 +22,7 @@ class LiveActivity: NSObject {
       do {
         activity = try Activity
           .request(attributes: activityAttributes, contentState: initialContentState)
-
-        resolve("Requested Live Activity \(String(describing: activity?.id)).")
+        resolve(String(describing: activity?.id))
       } catch {
         reject("Error requesting Live Activity \(error.localizedDescription).", "", error)
       }
