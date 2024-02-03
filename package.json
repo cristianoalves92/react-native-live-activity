@@ -37,6 +37,18 @@
   ],
   "repository": "https://github.com/cristianoalves92/react-native-live-activity",
   "author": "Cristiano Alves <cristiano.f.t.alves@gmail.com> (https://github.com/cristianoalves92)",
+  "contributors": [
+    {
+      "name": "Cristiano Alves",
+      "email": "cristiano.f.t.alves@gmail.com",
+      "url": "https://github.com/cristianoalves92"
+    },
+    {
+      "name": "George Jose",
+      "email": "rust_world0r@icloud.com",
+      "url": "https://georgejose.com"
+    }
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/cristianoalves92/react-native-live-activity/issues"
