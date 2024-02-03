@@ -34,7 +34,7 @@ const ActivitiesList = ({
         </View>
       );
     },
-    [activities]
+    [onPressEditActivity, onPressEndActivity]
   );
 
   return (

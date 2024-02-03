@@ -6,7 +6,7 @@ const LINKING_ERROR =
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo managed workflow\n';
 
-const LiveActivity = NativeModules.LiveActivity
+const LiveActivity_ = NativeModules.LiveActivity
   ? NativeModules.LiveActivity
   : new Proxy(
       {},
@@ -17,43 +17,38 @@ const LiveActivity = NativeModules.LiveActivity
       }
     );
 
-export async function startActivity<T extends Record<string, any>>(
-  data: T
-): Promise<string> {
-  const dataString = JSON.stringify(data);
-  return LiveActivity.startActivity(dataString);
-}
+export default class LiveActivity<T extends unknown> {
+  startActivity(data: T): Promise<string | null> {
+    const dataString = JSON.stringify(data);
+    return LiveActivity_.startActivity(dataString);
+  }
 
-export async function listAllActivities<
-  T extends Record<string, any>
->(): Promise<
-  {
-    id: string;
-    data: T;
-  }[]
-> {
-  return LiveActivity.listAllActivities()
-    .then((activities: { id: string; data: string }[]) => {
-      return activities?.map((activity) => {
-        return {
-          id: activity.id,
-          data: JSON.parse(activity.data) as T,
-        };
+  async updateActivity(id: string, data: T) {
+    const dataString = JSON.stringify(data);
+    return LiveActivity_.updateActivity(id, dataString);
+  }
+
+  endActivity(id: string) {
+    return LiveActivity_.endActivity(id);
+  }
+
+  async listAllActivities(): Promise<
+    {
+      id: string;
+      data: T;
+    }[]
+  > {
+    return LiveActivity_.listAllActivities()
+      .then((activities: { id: string; data: string }[]) => {
+        return activities?.map((activity) => {
+          return {
+            id: activity.id,
+            data: JSON.parse(activity.data) as T,
+          };
+        });
+      })
+      .catch((err: Error) => {
+        console.error(err);
       });
-    })
-    .catch((err: Error) => {
-      console.error(err);
-    });
-}
-
-export function endActivity(id: string) {
-  return LiveActivity.endActivity(id);
-}
-
-export async function updateActivity<T extends Record<string, any>>(
-  id: string,
-  data: T
-) {
-  const dataString = JSON.stringify(data);
-  return LiveActivity.updateActivity(id, dataString);
+  }
 }
