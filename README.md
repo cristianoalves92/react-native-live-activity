@@ -17,34 +17,33 @@ Take inspiration from the [example](./example/ios/LiveActivityDynamicIsland/Live
 ## Usage
 
 ```js
-import {
-startActivity,
-listAllActivities,
-endActivity,
-updateActivity,
-} from 'react-native-live-activity';
+import LiveActivity from 'react-native-live-activity';
 
-// Please be careful to use the same interface as the one you defined in your Swift module.
-interface LiveActivityParams {
+// Please be careful to use the same type as the one you defined in your Swift module.
+type LiveActivityParams = {
   status: string;
   driverName: string;
   expectedDeliveryTime: string;
 }
 
-await startActivity({
+const liveActivity = new LiveActivity<LiveActivityParams>()
+
+const activity = await liveActivity.startActivity({
   status: "Packing",
   driveName: "John",
   expectedDeliveryTime: "12 PM"
 })
-await updateActivity(activity.id, {
+
+await liveActivity.updateActivity(activity.id, {
   status: "Driving",
   driveName: "John",
   expectedDeliveryTime: "12 PM"
-});
-await endActivity(activity.id);
+})
 
-const [activities, setActivities] = React.useState<any[]>([]);
-listAllActivities().then(setActivities);
+await liveActivity.endActivity(activity.id)
+
+const [activities, setActivities] = React.useState<any[]>([])
+liveActivity.listAllActivities().then(setActivities)
 
 ```
 
@@ -64,10 +63,7 @@ $ open ./example/ios/LiveActivityExample.xcworkspace
 
 After that build the xCode project.
 
-
-
 https://user-images.githubusercontent.com/3778297/192741742-9d3a9bc5-e26a-4197-b152-5f60796736eb.mp4
-
 
 ## License
 

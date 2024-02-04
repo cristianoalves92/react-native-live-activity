@@ -1,20 +1,17 @@
 import * as React from 'react';
 
 import { StyleSheet, View, Text, SafeAreaView, Button } from 'react-native';
-import {
-  startActivity,
-  listAllActivities,
-  endActivity,
-  updateActivity,
-} from 'react-native-live-activity';
 import ActivitiesList from './ActivitiesList';
 import Row from './Row';
+import LiveActivity from 'react-native-live-activity';
 
-interface StartLiveActivityParams {
+type StartLiveActivityParams = {
   status: string;
   driverName: string;
   expectedDeliveryTime: string;
-}
+};
+
+const liveActivity = new LiveActivity<StartLiveActivityParams>();
 
 export default function App() {
   const [status, setStatus] = React.useState<string>('Packing');
@@ -41,24 +38,24 @@ export default function App() {
   }, [activity]);
 
   React.useEffect(() => {
-    listAllActivities<StartLiveActivityParams>().then(setActivities);
+    liveActivity.listAllActivities().then(setActivities);
   }, [setActivities]);
 
   const onPressCreate = React.useCallback(() => {
-    startActivity<StartLiveActivityParams>({
-      status,
-      driverName,
-      expectedDeliveryTime,
-    }).then(() =>
-      listAllActivities<StartLiveActivityParams>().then(setActivities)
-    );
+    liveActivity
+      .startActivity({
+        status,
+        driverName,
+        expectedDeliveryTime,
+      })
+      .then(() => liveActivity.listAllActivities().then(setActivities));
   }, [status, driverName, expectedDeliveryTime]);
 
   const onPressEdit = React.useCallback(() => {
     if (!activity?.id) {
       return;
     }
-    updateActivity<StartLiveActivityParams>(activity.id, {
+    liveActivity.updateActivity(activity.id, {
       status,
       driverName,
       expectedDeliveryTime,
@@ -69,21 +66,18 @@ export default function App() {
   const onPressEndActivity = React.useCallback(
     (item) => {
       return () => {
-        endActivity(item.id);
+        liveActivity.endActivity(item.id);
         setActivities(activities.filter((value) => value.id !== item.id));
       };
     },
     [activities]
   );
 
-  const onPressEditActivity = React.useCallback(
-    (item) => {
-      return () => {
-        setActivity(item);
-      };
-    },
-    [activities]
-  );
+  const onPressEditActivity = React.useCallback((item) => {
+    return () => {
+      setActivity(item);
+    };
+  }, []);
 
   return (
     <SafeAreaView>
@@ -98,8 +92,8 @@ export default function App() {
         />
       </View>
       <Button
-        title={!!activity ? 'Update activity' : 'Create activity'}
-        onPress={!!activity ? onPressEdit : onPressCreate}
+        title={activity ? 'Update activity' : 'Create activity'}
+        onPress={activity ? onPressEdit : onPressCreate}
       />
 
       <ActivitiesList
