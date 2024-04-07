@@ -17,7 +17,7 @@ const LiveActivity_ = NativeModules.LiveActivity
       }
     );
 
-export default class LiveActivity<T extends unknown> {
+export default class LiveActivityManager<T extends unknown> {
   startActivity(data: T): Promise<string | null> {
     const dataString = JSON.stringify(data);
     return LiveActivity_.startActivity(dataString);
@@ -28,8 +28,9 @@ export default class LiveActivity<T extends unknown> {
     return LiveActivity_.updateActivity(id, dataString);
   }
 
-  endActivity(id: string) {
-    return LiveActivity_.endActivity(id);
+  async endActivity(id: string) {
+    const result = await LiveActivity_.endActivity(id);
+    return result;
   }
 
   async listAllActivities(): Promise<

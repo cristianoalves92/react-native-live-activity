@@ -49,16 +49,19 @@ class LiveActivity: NSObject {
   }
 
   @objc(endActivity:withResolver:withRejecter:)
-  func endActivity(id: String, resolve _: RCTPromiseResolveBlock, reject _: RCTPromiseRejectBlock) {
+  func endActivity(id: String,  resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
     if #available(iOS 16.1, *), isIphone() {
       Task {
         await Activity<MyActivityAttributes>.activities.filter { $0.id == id }.first?.end(dismissalPolicy: .immediate)
+        resolve(nil)
       }
+    } else {
+        resolve(nil)
     }
   }
 
   @objc(updateActivity:withData:withResolver:withRejecter:)
-  func updateActivity(id: String, data: String, resolve _: RCTPromiseResolveBlock, reject _: RCTPromiseRejectBlock) {
+  func updateActivity(id: String, data: String,  resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
     if #available(iOS 16.1, *), isIphone() {
       Task {
         let updatedStatus = MyActivityAttributes
@@ -66,7 +69,10 @@ class LiveActivity: NSObject {
         let activities = Activity<MyActivityAttributes>.activities
         let activity = activities.filter { $0.id == id }.first
         await activity?.update(using: updatedStatus)
+        resolve(nil)
       }
+    } else {
+        resolve(nil)
     }
   }
 }
