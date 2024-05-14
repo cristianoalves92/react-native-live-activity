@@ -1,6 +1,6 @@
 {
   "name": "react-native-live-activity",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "test",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -37,6 +37,18 @@
   ],
   "repository": "https://github.com/cristianoalves92/react-native-live-activity",
   "author": "Cristiano Alves <cristiano.f.t.alves@gmail.com> (https://github.com/cristianoalves92)",
+  "contributors": [
+    {
+      "name": "Cristiano Alves",
+      "email": "cristiano.f.t.alves@gmail.com",
+      "url": "https://github.com/cristianoalves92"
+    },
+    {
+      "name": "George Jose",
+      "email": "rust_world0r@icloud.com",
+      "url": "https://georgejose.com"
+    }
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/cristianoalves92/react-native-live-activity/issues"
@@ -47,25 +59,29 @@
   },
   "devDependencies": {
     "@arkweid/lefthook": "^0.7.7",
-    "@babel/eslint-parser": "^7.18.2",
+    "@babel/eslint-parser": "^7.23.10",
     "@commitlint/config-conventional": "^17.0.2",
-    "@react-native-community/eslint-config": "^3.0.2",
+    "@react-native-community/eslint-config": "^3.2.0",
     "@release-it/conventional-changelog": "^5.0.0",
     "@types/jest": "^28.1.2",
     "@types/react": "~17.0.21",
     "@types/react-native": "0.68.0",
+    "@typescript-eslint/eslint-plugin": "^6.20.0",
+    "@typescript-eslint/parser": "^6.20.0",
     "commitlint": "^17.0.2",
-    "eslint": "^8.4.1",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-prettier": "^4.0.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-ft-flow": "^3.0.3",
+    "eslint-plugin-jest": "^27.6.3",
+    "eslint-plugin-prettier": "^5.1.3",
     "jest": "^28.1.1",
     "pod-install": "^0.1.0",
-    "prettier": "^2.0.5",
+    "prettier": "^3.2.4",
     "react": "17.0.2",
     "react-native": "0.68.2",
     "react-native-builder-bob": "^0.18.3",
     "release-it": "^15.0.0",
-    "typescript": "^4.5.2"
+    "typescript": "^5.3.3"
   },
   "resolutions": {
     "@types/react": "17.0.21"
@@ -105,11 +121,14 @@
   },
   "eslintConfig": {
     "root": true,
-    "parser": "@babel/eslint-parser",
+    "parser": "@typescript-eslint/parser",
     "extends": [
       "@react-native-community",
       "prettier"
     ],
+    "env": {
+      "jest/globals": true
+    },
     "rules": {
       "prettier/prettier": [
         "error",
